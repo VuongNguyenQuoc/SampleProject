@@ -49,6 +49,9 @@ namespace SampleProject
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<SampleprojectContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddDatabaseDeveloperPageExceptionFilter();
+
             services.AddTransient<ITenantService, TenantService>();
             services.AddTransient<IUnitOfWork, MemoryUnitOfWork>();
             services.AddTransient(typeof(IRepository<>), typeof(MemoryRepository<>));
@@ -152,6 +155,7 @@ namespace SampleProject
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseMigrationsEndPoint();
             }
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();

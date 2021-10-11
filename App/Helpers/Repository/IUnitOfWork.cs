@@ -8,7 +8,7 @@ namespace App.Helpers.Repository
 {
     public interface IUnitOfWork : IDisposable
     {
-        void Commit();
+        Task< bool> Commit();
         void Rollback();
     }
 }

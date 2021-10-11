@@ -24,19 +24,19 @@ namespace API.Controllers
         }
         // GET: api/<TenantController>
         [HttpGet]
-        public IEnumerable<TenantDto> GetAll()
+        public async Task< IEnumerable<TenantDto>> GetAll()
         {
-            return _tenantService.GetAll();
+            return await _tenantService.GetAll();
         }
        
         // POST api/<TenantController>
         [HttpPost]
-        public Response<TenantDto> Post([FromBody] TenantDto value)
+        public async Task< Response<TenantDto> >Post([FromBody] TenantDto value)
         {
             Response<TenantDto> response = new Response<TenantDto>();
             try
             {
-                response.Object = _tenantService.Add(value);
+                response.Object =await _tenantService.Add(value);
             }
             catch (Exception ex)
             {

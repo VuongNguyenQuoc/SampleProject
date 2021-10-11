@@ -2,6 +2,7 @@
 using App.DomainModelLayer.DbContexts;
 using App.DomainModelLayer.Models;
 using App.DomainModelLayer.OrderItems;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,23 +19,20 @@ namespace App.InfrastructureLayer
             _context = context;
 
         }
-        public OrderItem UpdateQty(Guid id,int qty)
+        public async Task< OrderItem> UpdateQty(Guid id,int qty)
         {
-            OrderItem orderItem = _context.OrderItem.Where(x => x.Id == id).FirstOrDefault();
+            OrderItem orderItem =await _context.OrderItem.Where(x => x.Id == id).FirstOrDefaultAsync();
             if(orderItem!=null)
             {
                 orderItem.Quantity = qty;
                 orderItem.Cost = qty * orderItem.ProductPrice;
-                _context.OrderItem.Update(orderItem);
-
-                _context.SaveChanges();
+                _context.OrderItem.Update(orderItem);                
             }
             else
             {
                 throw new Exception("Order item not exist");
             }
             return orderItem;
-        }
-
+        }        
     }
 }

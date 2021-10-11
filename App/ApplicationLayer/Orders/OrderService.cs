@@ -1,5 +1,6 @@
 ﻿using App.ApplicationLayer.ModelsDto;
 using App.ApplicationLayer.OrderItems;
+using App.DomainModelLayer.DbContexts;
 using App.DomainModelLayer.Models;
 using App.DomainModelLayer.OrderItems;
 using App.DomainModelLayer.Orders;
@@ -20,36 +21,63 @@ namespace App.ApplicationLayer.Orders
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IOrderItemService _orderItemService;
-        public OrderService(IOrderRepository orderRepository, IOrderItemService orderItemService, IMapper mapper, IUnitOfWork unitOfWork)
+        private readonly SampleprojectContext _context;
+        public OrderService(SampleprojectContext context , IOrderRepository orderRepository, IOrderItemService orderItemService, IMapper mapper, IUnitOfWork unitOfWork)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _orderRepository = orderRepository;
             _orderItemService = orderItemService;
+            _context = context;
         }
 
-        public OrderDto Add(OrderDto order)
+        public async Task<OrderDto> Add(OrderDto order)
         {
-            Order order1 = Order.Create(order.CustomerId, order.Number, order.TenantId, order.Sum);
-            var result = _orderRepository.Add(order1);
-            foreach (var item in order.OrderItem)
+            try
             {
-                OrderItem orderItem = OrderItem.Create(result.Id, item.ProductId, item.Quantity, item.ProductPrice);                
-                _orderItemService.Add(_mapper.Map<OrderItem, OrderItemDto>(orderItem));               
+                var orderCheck = new OrderAlreadySpec(_context,order);
+                if (orderCheck.CheckMaxOrderItem())
+                {
+                    throw new Exception("One Order can not contain more than 5 Items");
+                }
+                else if (orderCheck.CheckUniqueItem())
+                {
+                    throw new Exception("Duplicate product in order");
+                }               
+                
+                Order order1 = Order.Create(order.CustomerId, orderCheck.GetRowNumber(), order.TenantId, order.Sum);
+
+                var result = _orderRepository.Add(order1);
+                foreach (var item in order.OrderItem)
+                {
+                    OrderItem orderItem = OrderItem.Create(result.Result.Id, item.ProductId, item.Quantity, item.ProductPrice);
+                    await _orderItemService.Add(_mapper.Map<OrderItem, OrderItemDto>(orderItem));
+                }
+                order1.Sum = order.OrderItem.Sum(x => x.Quantity * x.Cost);
+                await _unitOfWork.Commit();
+                return getById(result.Result.Id).Result;
             }
-            _unitOfWork.Commit();
-            return getById(result.Id);
+            catch (Exception )
+            {
+                throw new Exception("Duplicate product in order");
+            }         
         }
 
-        public IEnumerable<OrderDto> GetAll()
+        public async Task<IEnumerable<OrderDto>> GetAll()
         {
-            var result = _orderRepository.getAllSpe();
+            var result = await _orderRepository.getAllSpe();
             return _mapper.Map<IEnumerable<Order>, IEnumerable<OrderDto>>(result);
         }
 
-        public OrderDto getById(Guid id)
+        public async Task< IEnumerable<OrderDto>> GetAllBySum(int SumMin, int SumMax)
         {
-            var result = _orderRepository.getByid(id);
+            var result = await _orderRepository.getAllBySum(SumMin, SumMax);
+            return _mapper.Map<IEnumerable<Order>, IEnumerable<OrderDto>>(result);
+        }
+
+        public async Task< OrderDto> getById(Guid id)
+        {
+            var result = await _orderRepository.getByid(id);
             return _mapper.Map<Order, OrderDto>(result);
             // return result;
         }

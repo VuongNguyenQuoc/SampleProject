@@ -17,7 +17,7 @@ namespace App.ApplicationLayer.OrderItems
 {
     public class OrderItemService : IOrderItemService
     {
-        private readonly IOrderItemRepository _orderService;
+        private readonly IOrderItemRepository _orderItemService;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
         private readonly SampleprojectContext _context;
@@ -25,10 +25,10 @@ namespace App.ApplicationLayer.OrderItems
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
-            _orderService = orderService;
+            _orderItemService = orderService;
             _context = context;
         }
-        public OrderItemDto Add(OrderItemDto orderItems)
+        public async Task< OrderItemDto> Add(OrderItemDto orderItems)
         {
             var checkOrderItem = new OrderItemAlreadySpec(_context, orderItems.Id, orderItems.Quantity, orderItems.ProductPrice);
 
@@ -42,19 +42,19 @@ namespace App.ApplicationLayer.OrderItems
             }
 
             OrderItem orderItems1 = OrderItem.Create(orderItems.OrderId, orderItems.ProductId, orderItems.Quantity, orderItems.ProductPrice);
-            var result = _orderService.Add(orderItems1);
-            _unitOfWork.Commit();
-            return _mapper.Map<OrderItem, OrderItemDto>(result);
+            var result = _orderItemService.Add(orderItems1);
+            await _unitOfWork.Commit();
+            return _mapper.Map<OrderItem, OrderItemDto>(result.Result);
         }
-
         public bool Remove(OrderItemDto orderItem)
         {
-            return _orderService.Remove(_mapper.Map<OrderItemDto, OrderItem>(orderItem));
+            return _orderItemService.Remove(_mapper.Map<OrderItemDto, OrderItem>(orderItem));
         }
 
-        public OrderItemDto UpdateQty(Guid id, int qty)
+        public async Task< OrderItemDto> UpdateQty(Guid id, int qty)
         {
-            var result = _orderService.UpdateQty(id, qty);
+            var result = await _orderItemService.UpdateQty(id, qty);
+            await _unitOfWork.Commit();
             return _mapper.Map<OrderItem, OrderItemDto>(result);
         }
     }

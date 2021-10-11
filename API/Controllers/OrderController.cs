@@ -31,23 +31,29 @@ namespace API.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public OrderDto GetById(Guid id)
+        public async Task< OrderDto> GetById(Guid id)
         {
-            return _orderService.getById(id);
+            return await _orderService.getById(id);
+        }
+        [HttpGet("GetOrderBySum")]
+        public async Task<IEnumerable< OrderDto>> GetBySum(int SumMin , int SumMax)
+        {
+            return await _orderService.GetAllBySum(SumMin,SumMax);
         }
         [HttpGet]
-        public IEnumerable< OrderDto> GetAll()
+        public async Task<IEnumerable<OrderDto>> GetAll()
         {
-            return _orderService.GetAll();
+            return await _orderService.GetAll();
         }
+
         // POST api/<OrderController>
         [HttpPost]
-        public Response<OrderDto> Post([FromBody] OrderDto value)
+        public async Task< Response<OrderDto>> Post([FromBody] OrderDto value)
         {
             Response<OrderDto> response = new Response<OrderDto>();
             try
             {
-                response.Object = _orderService.Add(value);
+                response.Object = await _orderService.Add(value);
             }
             catch (Exception ex)
             {
@@ -60,12 +66,12 @@ namespace API.Controllers
 
         // Order Item
         [HttpPut("UpdateOrderItem/{id}")]
-        public Response<OrderItemDto> UpdateOrderItem(Guid id ,[FromBody] OrderItemDto value)
+        public async Task< Response<OrderItemDto>> UpdateOrderItem(Guid id ,[FromBody] OrderItemDto value)
         {
             Response<OrderItemDto> response = new Response<OrderItemDto>();
             try
             {
-                response.Object = _orderItemService.UpdateQty(id,value.Quantity);
+                response.Object = await _orderItemService.UpdateQty(id,value.Quantity);
             }
             catch (Exception ex)
             {

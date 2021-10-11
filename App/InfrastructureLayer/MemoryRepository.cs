@@ -19,9 +19,9 @@ namespace App.InfrastructureLayer
         {
             _context = context;
         }
-        public TEntity FindById(Guid id)
+        public async Task<TEntity> FindById(Guid id)
         {
-            return _context.Set<TEntity>().Find(id);
+            return await _context.Set<TEntity>().FindAsync(id);
         }
 
         public TEntity FindOne(ISpecification<TEntity> spec)
@@ -34,12 +34,11 @@ namespace App.InfrastructureLayer
             return _context.Set<TEntity>().Where(spec.IsSatisfiedBy);
         }
 
-        public TEntity Add(TEntity entity)
+        public async Task<TEntity> Add(TEntity entity)
         {
             try
             {
-                _context.Set<TEntity>().Add(entity);
-                _context.SaveChanges();
+                await _context.Set<TEntity>().AddAsync(entity);          
                 return entity;
             }
             catch (Exception)
@@ -49,14 +48,16 @@ namespace App.InfrastructureLayer
             }
             
         }
+        public void AddRange(IEnumerable<TEntity> entities)
+        {
+            _context.Set<TEntity>().AddRange(entities);
+        }
 
         public bool Remove(TEntity entity)
         {
             try
-            {
-                
-                _context.Set<TEntity>().Remove(entity);
-                _context.SaveChanges();
+            {                
+                 _context.Set<TEntity>().Remove(entity);               
                 return true;
 
             }
@@ -77,8 +78,7 @@ namespace App.InfrastructureLayer
         {
             try
             {
-                _context.Set<TEntity>().Update(model);
-                _context.SaveChanges();
+                _context.Update(model);             
                 return model;
             }
             catch (Exception)

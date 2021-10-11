@@ -10,8 +10,9 @@ namespace App.ApplicationLayer.Orders
 {
     public interface IOrderService
     {
-        OrderDto Add(OrderDto order);
-        OrderDto getById(Guid id);
-        IEnumerable< OrderDto> GetAll();
+        Task<OrderDto> Add(OrderDto order);
+        Task<OrderDto> getById(Guid id);
+        Task<IEnumerable< OrderDto>> GetAllBySum(int min, int max);
+        Task<IEnumerable<OrderDto>> GetAll();
     }
 }

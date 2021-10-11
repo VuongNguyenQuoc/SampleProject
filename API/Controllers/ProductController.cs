@@ -24,12 +24,12 @@ namespace API.Controllers
 
         // POST api/<ProductController>
         [HttpPost]
-        public Response<ProductDto> Post([FromBody] ProductDto value)
+        public async Task<Response<ProductDto>> Post([FromBody] ProductDto value)
         {
             Response<ProductDto> response = new Response<ProductDto>();
             try
             {
-                response.Object = _productService.Add(value);
+                response.Object = await _productService.Add(value);
             }
             catch (Exception ex)
             {
@@ -38,17 +38,17 @@ namespace API.Controllers
                 response.ErrorMessage = ex.Message;
             }
             return response;
-           
+
         }
 
         // PUT api/<ProductController>/5
         [HttpPut("{id}")]
-        public Response<ProductDto> Put(Guid id, [FromBody] string title)
+        public async Task<Response<ProductDto>> Put(Guid id, [FromBody] string title)
         {
             Response<ProductDto> response = new Response<ProductDto>();
             try
             {
-                response.Object = _productService.Update(id, title);
+                response.Object = await _productService.Update(id, title);
             }
             catch (Exception ex)
             {
@@ -56,7 +56,7 @@ namespace API.Controllers
                 response.Errored = true;
                 response.ErrorMessage = ex.Message;
             }
-            return response;             
+            return response;
         }
     }
 }

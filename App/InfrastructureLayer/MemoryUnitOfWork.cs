@@ -1,4 +1,5 @@
-﻿using App.Helpers.Repository;
+﻿using App.DomainModelLayer.DbContexts;
+using App.Helpers.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +10,30 @@ namespace App.InfrastructureLayer
 {
     public class MemoryUnitOfWork : IUnitOfWork
     {
-        public void Commit()
+        private SampleprojectContext _context;
+
+        public MemoryUnitOfWork(SampleprojectContext context)
         {
-            //commit
+            _context = context;
+        }
+        public async Task< bool> Commit()
+        {
+            bool returnValue = true;
+            using (var dbContextTransaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    await _context.SaveChangesAsync();
+                    dbContextTransaction.Commit();
+                }
+                catch (Exception)
+                {
+                    //Log Exception Handling message                      
+                    returnValue = false;
+                    dbContextTransaction.Rollback();
+                }
+            }
+            return returnValue;
         }
 
         public void Rollback()

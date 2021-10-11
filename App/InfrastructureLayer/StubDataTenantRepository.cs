@@ -5,6 +5,7 @@ using App.DomainModelLayer.Tenants;
 using App.Helpers.Repository;
 using App.Helpers.Specification;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +15,17 @@ using System.Threading.Tasks;
 namespace App.InfrastructureLayer
 {
     public class StubDataTenantRepository : MemoryRepository<Tenant> , ITenantRepository
-    {    
-       
-        public StubDataTenantRepository(SampleprojectContext context):base (context)
-        {     
+    {
 
-        }       
+        private readonly SampleprojectContext _context;
+        public StubDataTenantRepository(SampleprojectContext context):base (context)
+        {
+            _context = context;
+        }
+
+        public async Task<IEnumerable<Tenant>> GetAllAsyn()
+        {
+            return await _context.Tenant.ToListAsync();
+        }
     }
 }

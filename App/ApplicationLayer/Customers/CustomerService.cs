@@ -25,7 +25,7 @@ namespace App.ApplicationLayer.Customers
             _mapper = mapper;
             _customerRepository = customerRepository;
         }
-        public CustomerDto Add(CustomerDto customerDto)
+        public async Task< CustomerDto> Add(CustomerDto customerDto)
         {
             ISpecification<Customer> alreadyCus = new CustomerAlreadySpec(customerDto.Title,customerDto.TenantId);
 
@@ -34,8 +34,8 @@ namespace App.ApplicationLayer.Customers
                 throw new Exception("Customer with this tile already exists");
             Customer cus = Customer.Create(Guid.NewGuid(), customerDto.Title,customerDto.TenantId);
             var result = _customerRepository.Add(cus);
-            _unitOfWork.Commit();
-            return _mapper.Map<Customer, CustomerDto>(result);
+            await _unitOfWork.Commit();
+            return _mapper.Map<Customer, CustomerDto>(result.Result);
         }
     }
 }

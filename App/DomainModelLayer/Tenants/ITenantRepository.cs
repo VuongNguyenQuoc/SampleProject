@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 namespace App.DomainModelLayer.Tenants
 {
     public interface ITenantRepository : IRepository<Tenant>
-    {       
+    {
+        Task<IEnumerable<Tenant>> GetAllAsyn();
     }
 }

@@ -28,7 +28,7 @@ namespace App.ApplicationLayer.Tenants
             _unitOfWork = unitOfWork;
         }
 
-        public TenantDto Add(TenantDto tenant)
+        public async Task<TenantDto> Add(TenantDto tenant)
         {
             ISpecification<Tenant> alreadyTenant = new TenantAlreadySpec(tenant.Title);
 
@@ -37,13 +37,13 @@ namespace App.ApplicationLayer.Tenants
                 throw new Exception("Tenant with this title already exists");
             Tenant tenant1 = Tenant.Create(Guid.NewGuid(), tenant.Title);
             var result= _tenantRepository.Add(tenant1);
-            _unitOfWork.Commit();
-            return  _mapper.Map<Tenant, TenantDto>(result);            
+            await _unitOfWork.Commit();
+            return  _mapper.Map<Tenant, TenantDto>(result.Result);            
         }     
 
-        IEnumerable<TenantDto> ITenantService.GetAll()
+        public async Task<IEnumerable<TenantDto>> GetAll()
         {
-            return _mapper.Map<IEnumerable<TenantDto>> (_tenantRepository.GetAll());
+            return _mapper.Map<IEnumerable<TenantDto>> (await _tenantRepository.GetAllAsyn());
         }
     }
 }

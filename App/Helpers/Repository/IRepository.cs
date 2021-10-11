@@ -11,10 +11,10 @@ namespace App.Helpers.Repository
     public interface IRepository<TEntity>
     where TEntity : class
     {
-        TEntity FindById(Guid id);
+        Task<TEntity> FindById(Guid id);
         TEntity FindOne(ISpecification<TEntity> spec);
         IEnumerable<TEntity> Find(ISpecification<TEntity> spec);
-        TEntity Add(TEntity entity);
+        Task<TEntity> Add(TEntity entity);
         TEntity Update(TEntity model);
         IEnumerable<TEntity> GetAll();
         bool Remove(TEntity entity);

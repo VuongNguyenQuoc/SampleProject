@@ -24,12 +24,12 @@ namespace API.Controllers
 
         // POST api/<CustomerController>
         [HttpPost]
-        public Response<CustomerDto> Post([FromBody] CustomerDto value)
+        public async Task< Response<CustomerDto>> Post([FromBody] CustomerDto value)
         {            
             Response<CustomerDto> response = new Response<CustomerDto>();
             try
             {
-                response.Object = _cusService.Add(value);
+                response.Object = await _cusService.Add(value);
             }
             catch (Exception ex)
             {

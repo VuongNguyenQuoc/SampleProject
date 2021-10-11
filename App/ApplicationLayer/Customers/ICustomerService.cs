@@ -9,6 +9,6 @@ namespace App.ApplicationLayer.Customers
 {
     public interface ICustomerService
     {       
-        CustomerDto Add(CustomerDto customerDto);      
+        Task<CustomerDto> Add(CustomerDto customerDto);      
     }
 }

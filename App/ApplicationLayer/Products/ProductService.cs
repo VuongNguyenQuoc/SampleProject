@@ -24,7 +24,7 @@ namespace App.ApplicationLayer.Products
             _mapper = mapper;
             _unitOfWork = unitOfWork;
         }
-        public ProductDto Add(ProductDto product)
+        public async Task< ProductDto> Add(ProductDto product)
         {
             ISpecification<Product> alreadyTenant = new ProductAlreadySpec(product.Code,product.TenantId);
 
@@ -35,20 +35,20 @@ namespace App.ApplicationLayer.Products
                 throw new Exception("Price can not be negative ");
             Product tenant1 = Product.Create(product.Code,product.Tilte,product.Description,product.Price,product.TenantId);
             var result = _productRepository.Add(tenant1);
-            _unitOfWork.Commit();
-            return _mapper.Map<Product, ProductDto>(result);
+            await _unitOfWork.Commit();
+             return _mapper.Map<Product, ProductDto>(result.Result);
         }
 
        
 
-        ProductDto IProductService.Update(Guid id, string tilte)
+        public async Task< ProductDto> Update(Guid id, string tilte)
         {
-            Product existingTenant = _productRepository.FindById(id);
+            Product existingTenant = _productRepository.FindById(id).Result;
             if (existingTenant == null)
                 throw new Exception("Not exists prouct in data");
           
             var result = _productRepository.Update(id,tilte);
-            _unitOfWork.Commit();
+             await _unitOfWork.Commit();
             return _mapper.Map<Product, ProductDto>(result);
         }
     }

@@ -7,7 +7,7 @@
    "IncludeConnectionString": false,
    "ModelNamespace": null,
    "OutputContextPath": "DbContexts",
-   "OutputPath": "DbContexts",
+   "OutputPath": "abc",
    "ProjectRootNamespace": "API",
    "Schemas": null,
    "SelectedHandlebarsLanguage": 0,
@@ -22,7 +22,7 @@
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[OrderItems]",
+         "Name": "[dbo].[OrderItem]",
          "ObjectType": 0
       },
       {

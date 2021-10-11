@@ -10,8 +10,8 @@ namespace App.ApplicationLayer.OrderItems
 {
     public interface IOrderItemService
     {
-        public OrderItemDto Add(OrderItemDto orderItems);
-        public OrderItemDto UpdateQty(Guid id, int qty);
+        public Task< OrderItemDto> Add(OrderItemDto orderItems);
+        public Task< OrderItemDto> UpdateQty(Guid id, int qty);
 
         public bool Remove(OrderItemDto id);
     }

@@ -10,7 +10,7 @@ namespace App.DomainModelLayer.OrderItems
 {
     public interface IOrderItemRepository : IRepository<OrderItem>
     {
-        public OrderItem UpdateQty(Guid id, int qty);
+        public Task< OrderItem> UpdateQty(Guid id, int qty);
 
 
 

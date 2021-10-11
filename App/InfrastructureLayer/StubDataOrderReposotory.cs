@@ -19,11 +19,16 @@ namespace App.InfrastructureLayer
             _context = context;
         }
 
-    
 
-        public IEnumerable<Order> getAllSpe()
-        {            
-            return  _context.Order.Include(c => c.OrderItem);            
+
+        public async Task<IEnumerable<Order>> getAllBySum(int SumMin, int SumMax)
+        {
+            return await _context.Order.Where(x => x.Sum >= SumMin & x.Sum <= SumMax).Include(c => c.OrderItem).ToArrayAsync();
+        }
+
+        public async Task<IEnumerable<Order>> getAllSpe()
+        {
+            return await _context.Order.Include(c => c.OrderItem).ToArrayAsync();
         }
 
         //public Order AddOrder(Order order)
@@ -46,10 +51,10 @@ namespace App.InfrastructureLayer
 
         //}
 
-        public Order getByid(Guid id)
+        public async Task<Order> getByid(Guid id)
         {
             Order order = new Order();
-            order = _context.Order.Where(x => x.Id == id).Include(c => c.OrderItem).FirstOrDefault();
+            order = await _context.Order.Where(x => x.Id == id).Include(c => c.OrderItem).FirstOrDefaultAsync();
             return order;
         }
     }

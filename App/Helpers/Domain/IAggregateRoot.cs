@@ -8,6 +8,6 @@ namespace App.Helpers.Domain
 {
     public interface IAggregateRoot
     {
-        Guid Id { get; }
+        //Guid Id { get; }
     }
 }

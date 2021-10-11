@@ -9,7 +9,7 @@ namespace App.ApplicationLayer.Products
 {
     public interface IProductService
     {
-        ProductDto Add(ProductDto tenant);
-        ProductDto Update(Guid id, string tilte);
+        Task< ProductDto> Add(ProductDto tenant);
+       Task< ProductDto> Update(Guid id, string tilte);
     }
 }

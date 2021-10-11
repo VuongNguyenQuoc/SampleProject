@@ -11,8 +11,9 @@ namespace App.DomainModelLayer.Orders
 {
     public interface IOrderRepository : IRepository<Order>
     {
-        public Order getByid(Guid id);
+        public Task<Order> getByid(Guid id);
         //public Order AddOrder(Order order);
-        public IEnumerable<Order> getAllSpe();
+        public Task<IEnumerable<Order>> getAllBySum(int SumMin, int SumMax);
+        public Task<IEnumerable<Order>> getAllSpe();
     }
 }

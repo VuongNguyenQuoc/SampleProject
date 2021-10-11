@@ -9,7 +9,7 @@ namespace App.ApplicationLayer.Tenants
 {
     public interface ITenantService
     {
-        TenantDto Add(TenantDto tenant);
-        IEnumerable<TenantDto> GetAll();
+        Task< TenantDto> Add(TenantDto tenant);
+        Task< IEnumerable<TenantDto>> GetAll();
     }
 }
